@@ -31,9 +31,9 @@ const getAUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
     const { userId } = req.params;
-    const { newUser } = req.body;
+    const { access } = req.body;
     try {
-        const updatedUser = await userService.updateUserById(userId, newUser);
+        const updatedUser = await userService.updateUserById(userId, { access });
         res.status(200).json(updatedUser);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -44,7 +44,7 @@ const deleteUser = async (req, res) => {
     const { userId } = req.params;
     try {
         const deletedUser = await userService.deleteUser(userId);
-        res.status(200).json(deleteUser);
+        res.status(200).json(deletedUser);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

@@ -7,18 +7,13 @@ module.exports = (sequelize, DataTypes) => {
             primaryKey: true,
             autoIncrement: true,
         },
-        temperatura: {
+        temperature: {
             type: DataTypes.FLOAT,
             allowNull: false,
         },
-        humedad: {
+        humidity: {
             type: DataTypes.FLOAT,
             allowNull: false,
-        },
-        fechaHora: {
-            type: DataTypes.DATE,
-            allowNull: false,
-            defaultValue: sequelize.NOW,
         },
     });
     return Emergency;
