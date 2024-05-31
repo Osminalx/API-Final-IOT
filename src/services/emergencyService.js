@@ -1,8 +1,8 @@
 const db = require('../models');
 
-const createEmergency = async (temp, hum) => {
+const createEmergency = async (temperature, humidity) => {
     try {
-        const emergency = await db.Emergency.create({ temp, hum });
+        const emergency = await db.Emergency.create({ temperature, humidity });
         return emergency;
     } catch (error) {
         throw new Error('Error al registrar la emergencia: ' + error.message);
@@ -23,21 +23,20 @@ const getEmergencyById = async emerId => {
         const emergency = await db.Emergency.findByPk(emerId);
         return emergency;
     } catch (error) {
-        throw new Error('Error al encontrar la emergencia' + error.message);
+        throw new Error('Error al encontrar la emergencia: ' + error.message);
     }
 };
-
 
 const deleteEmergency = async emerId => {
     try {
         const emergency = await db.Emergency.findByPk(emerId);
         if (!emergency) {
-            throw new Error('Usuario no encontrado');
+            throw new Error('Emergencia no encontrada');
         }
         await emergency.destroy();
         return emergency;
     } catch (error) {
-        throw new Error('Error al borrar el usuario: ' + error.message);
+        throw new Error('Error al borrar la emergencia: ' + error.message);
     }
 };
 
@@ -45,5 +44,5 @@ module.exports = {
     createEmergency,
     getAllEmergencies,
     getEmergencyById,
-    deleteEmergency
-}
+    deleteEmergency,
+};

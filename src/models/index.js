@@ -11,7 +11,7 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-db.User = require('./usersModel')(sequelize, DataTypes);
+db.DoorStatus = require('./doorStatusModel')(sequelize,DataTypes);
 db.Emergency = require('./emergencyModel')(sequelize, DataTypes);
 
 module.exports = db;
