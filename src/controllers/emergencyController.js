@@ -39,9 +39,19 @@ const deleteEmergency = async (req, res) => {
     }
 };
 
+const clearEmergencies = async (req, res) => {
+    try {
+        await emerService.clearAllEmergencies();
+        res.status(200).json({ message: 'All emergencies cleared' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
 module.exports = {
     createEmer,
     getEmergencies,
     getEmergency,
     deleteEmergency,
+    clearEmergencies,
 };
