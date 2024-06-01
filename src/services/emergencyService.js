@@ -40,9 +40,18 @@ const deleteEmergency = async emerId => {
     }
 };
 
+const clearAllEmergencies = async () => {
+    try {
+        await db.Emergency.destroy({ where: {}, truncate: true });
+    } catch (error) {
+        throw new Error('Error al borrar todas las emergencias: ' + error.message);
+    }
+};
+
 module.exports = {
     createEmergency,
     getAllEmergencies,
     getEmergencyById,
     deleteEmergency,
+    clearAllEmergencies,
 };
