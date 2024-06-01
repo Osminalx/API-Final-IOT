@@ -1,5 +1,3 @@
-var Sequelize = require('sequelize');
-
 module.exports = (sequelize, DataTypes) => {
     const DoorStatus = sequelize.define('DoorStatus', {
         id: {
@@ -7,10 +5,10 @@ module.exports = (sequelize, DataTypes) => {
             primaryKey: true,
             autoIncrement: true,
         },
-        status:{
+        status: {
             type: DataTypes.STRING,
-            allowNull:false,
-        }
+            allowNull: false,
+        },
     });
     return DoorStatus;
 };

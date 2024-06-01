@@ -1,31 +1,26 @@
 const db = require('../models');
 
-const db = require('../models');
-
 const getDoorStatus = async () => {
-    try {
-        const doorStatus = await db.DoorStatus.findOne({ where: { id: 1 } });
-        return doorStatus;
-    } catch (error) {
-        throw new Error('Error al obtener el estado de la puerta: ' + error.message);
-    }
+    return await db.DoorStatus.findAll();
 };
 
-const updateDoorStatus = async newStatus => {
-    try {
-        let doorStatus = await db.DoorStatus.findOne({ where: { id: 1 } });
-        if (!doorStatus) {
-            doorStatus = await db.DoorStatus.create({ status: newStatus });
-        } else {
-            await doorStatus.update({ status: newStatus });
-        }
+const updateDoorStatus = async status => {
+    const doorStatus = await db.DoorStatus.findOne();
+    if (doorStatus) {
+        doorStatus.status = status;
+        await doorStatus.save();
         return doorStatus;
-    } catch (error) {
-        throw new Error('Error al actualizar el estado de la puerta: ' + error.message);
     }
+    throw new Error('Door status not found');
+};
+
+// Nueva función para crear el estado de la puerta
+const createDoorStatus = async status => {
+    return await db.DoorStatus.create({ status });
 };
 
 module.exports = {
     getDoorStatus,
     updateDoorStatus,
+    createDoorStatus,
 };

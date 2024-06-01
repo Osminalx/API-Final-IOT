@@ -4,14 +4,15 @@ const app = express();
 const db = require('./models');
 const port = process.env.PORT || 3000;
 
-const doorStatusRoutes = require('./routes/doorStatusRoutes');
+const doorStatusRoutes = require('./routes/doorRoutes');
 const emergencyRoutes = require('./routes/emergencyRoutes');
+const emergencyService = require('./services/emergencyService');
 
-app.use(cors());
+app.use(cors({ origin: '*' }));
 app.use(express.json());
 
 app.use('/door', doorStatusRoutes);
-app.use('/api', emergencyRoutes);
+app.use('/emergencies', emergencyRoutes);
 
 app.get('/', (req, res) => {
     res.send('<h2>Hello world!</h2>');
@@ -29,26 +30,31 @@ db.sequelize
         console.error('Error al sincronizar las tablas:', err);
     });
 
-const mqtt = require('mqtt');
-const mqttClient = mqtt.connect('mqtt://broker.hivemq.com'); // Cambia esto a tu servidor MQTT si es diferente
-const emergencyService = require('./services/emergencyService');
+// Importar el cliente MQTT
+const mqttClient = require('./mqttClient');
 
-mqttClient.on('connect', () => {
-    console.log('Connected to MQTT broker');
-    mqttClient.subscribe('home/door/emergency');
-});
-
+// Manejar mensajes de emergencia
 mqttClient.on('message', async (topic, message) => {
-    if (topic === 'home/door/emergency') {
+    if (topic === 'puerta/inteligente/iot/osmin/y/leo/emergencias') {
         try {
+            console.log('Received message:', message.toString());
+
             const data = JSON.parse(message.toString());
             const { temperature, humidity } = data;
-            await emergencyService.createEmergency(temperature, humidity);
-            console.log('Emergency data saved to DB');
+
+            // Verificar que humidity no sea nulo
+            if (humidity != null) {
+                await emergencyService.createEmergency(temperature, humidity);
+                console.log('Emergency data saved to DB');
+            } else {
+                console.error('Error processing MQTT message: Humidity is null');
+            }
         } catch (error) {
             console.error('Error processing MQTT message:', error.message);
         }
     }
 });
 
-module.exports = mqttClient;
+
+
+module.exports = app;

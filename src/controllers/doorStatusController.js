@@ -1,5 +1,5 @@
 const doorStatusService = require('../services/doorStatusService');
-const mqttClient = require('../mqttClient'); // Asegúrate de ajustar la ruta
+const { DoorStatus } = require('../models');
 
 const getDoorStatus = async (req, res) => {
     try {
@@ -10,15 +10,21 @@ const getDoorStatus = async (req, res) => {
     }
 };
 
-const updateDoorStatus = async (req, res) => {
+const updateDoorStatus = async status => {
+    try {
+        const updatedStatus = await DoorStatus.update({ status }, { where: { id: 1 } });
+        return { status: 'success', data: updatedStatus };
+    } catch (error) {
+        throw new Error('Error updating door status');
+    }
+};
+
+// Nueva función para crear el estado de la puerta
+const createDoorStatus = async (req, res) => {
     const { status } = req.body;
     try {
-        const updatedDoorStatus = await doorStatusService.updateDoorStatus(status);
-
-        // Publica el nuevo estado en MQTT
-        mqttClient.publish('puerta/inteligente/iot/osmin/y/leo/status', JSON.stringify({ status }));
-
-        res.status(200).json(updatedDoorStatus);
+        const newDoorStatus = await doorStatusService.createDoorStatus(status);
+        res.status(201).json(newDoorStatus);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -27,4 +33,5 @@ const updateDoorStatus = async (req, res) => {
 module.exports = {
     getDoorStatus,
     updateDoorStatus,
+    createDoorStatus,
 };
